@@ -2,7 +2,7 @@
 CC = $(shell fltk-config --cxx)
 SRCS = Startmenu.cpp
 OBJS = ${SRCS:.cpp=.o}
-BASEFLAGS = -g -Wall -Wextra -std=c++11 -Wno-unused-parameter -w
+BASEFLAGS = -g -Wall -Wextra -std=c++11 -Wno-unused-parameter -w -lnpth
 # BASEFLAGS += -pedantic -fsanitize=address,undefined
 TARGET = main
 
