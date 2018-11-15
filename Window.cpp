@@ -10,19 +10,20 @@
 
 //------------------------------------------------------------------------------
 
-namespace Graph_lib {
+namespace Graph_lib
+{
 
-Window::Window(int ww, int hh, const string& title)
-    :Fl_Window(ww,hh,title.c_str()),w(ww),h(hh)
+Window::Window(int ww, int hh, const string &title)
+    : Fl_Window(ww, hh, title.c_str()), w(ww), h(hh)
 {
     init();
 }
 
 //------------------------------------------------------------------------------
 
-Window::Window(Point xy, int ww, int hh, const string& title)
-    :Fl_Window(xy.x,xy.y,ww,hh,title.c_str()),w(ww),h(hh)
-{ 
+Window::Window(Point xy, int ww, int hh, const string &title)
+    : Fl_Window(xy.x, xy.y, ww, hh, title.c_str()), w(ww), h(hh)
+{
     init();
 }
 
@@ -39,12 +40,13 @@ void Window::init()
 void Window::draw()
 {
     Fl_Window::draw();
-    for (unsigned int i=0; i<shapes.size(); ++i) shapes[i]->draw();
+    for (unsigned int i = 0; i < shapes.size(); ++i)
+        shapes[i]->draw();
 }
 
 //------------------------------------------------------------------------------
 
-void Window::attach(Widget& w)
+void Window::attach(Widget &w)
 {
     begin();         // FTLK: begin attaching new Fl_Wigets to this window
     w.attach(*this); // let the Widget create its Fl_Wigits
@@ -53,33 +55,36 @@ void Window::attach(Widget& w)
 
 //------------------------------------------------------------------------------
 
-void Window::detach(Widget& b)
+void Window::detach(Widget &b)
 {
     b.hide();
 }
 
 //------------------------------------------------------------------------------
 
-void Window::detach(Shape& s)
-    // guess that the last attached will be first released
+void Window::detach(Shape &s)
+// guess that the last attached will be first released
 {
-	for (vector<Shape*>::size_type i = shapes.size(); 0<i; --i)    
-        if (shapes[i-1]==&s)
-            shapes.erase(shapes.begin()+(i-1));
+    for (vector<Shape *>::size_type i = shapes.size(); 0 < i; --i)
+        if (shapes[i - 1] == &s)
+            shapes.erase(shapes.begin() + (i - 1));
 }
 
 //------------------------------------------------------------------------------
 
-void Window::put_on_top(Shape& p) {
-    for (int i=0; i<shapes.size(); ++i) {
-        if (&p==shapes[i]) {
-            for (++i; i<shapes.size(); ++i)
-                shapes[i-1] = shapes[i];
-            shapes[shapes.size()-1] = &p;
+void Window::put_on_top(Shape &p)
+{
+    for (int i = 0; i < shapes.size(); ++i)
+    {
+        if (&p == shapes[i])
+        {
+            for (++i; i < shapes.size(); ++i)
+                shapes[i - 1] = shapes[i];
+            shapes[shapes.size() - 1] = &p;
             return;
         }
     }
-}
+}1`
 
 //------------------------------------------------------------------------------
 
@@ -90,4 +95,4 @@ int gui_main()
 
 //------------------------------------------------------------------------------
 
-} // of namespace Graph_lib
+} // namespace Graph_lib

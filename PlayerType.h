@@ -3,5 +3,6 @@
 enum class PlayerType {
     None = 0,
     LeftSide = 1,
-    RightSide = 2
+    RightSide = 2,
+    Both
 };
