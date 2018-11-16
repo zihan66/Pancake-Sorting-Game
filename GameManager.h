@@ -8,45 +8,47 @@
 #include "Score.h"
 #include "PlayerType.h"
 
-class GameManager {
-private:
+class GameManager
+{
+  private:
     int difficulty;
     int numberOfPancakes;
     std::string playerInitials;
 
-    Player* leftPlayer;
-    Player* rightPlayer;
+    Player *leftPlayer;
+    Player *rightPlayer;
 
-    IOManager* ioManager;
-public:
+    IOManager *ioManager;
+
+  public:
     GameManager();
     ~GameManager();
 
     int getNumberOfPancakes();
     int getAIDifficulty(int maxDifficulty);
 
-    int* promptForInitialStack(int size);
-    int* getRandomInitialStack(int size);
+    int *promptForInitialStack(int size);
+    int *getRandomInitialStack(int size);
 
-    int* getInitialStack(int size);
-	
+    int *getInitialStack(int size);
+
     std::vector<Score> getScoresFromFile();
     std::string promptForInitials();
     void displayScores(std::string initials);
-	void displaySplash();
-	void displayInstructions();
+    void displaySplash();
+    void displayInstructions();
 
     int calculateScore();
 
     PlayerType checkGameOver();
-    void displayGameOver(PlayerType winner);
-    void displayAndWriteFinalScore(int score);
+    std::string gameOver(PlayerType winner);
+    void displayAndWriteFinalScore(int score, string message);
     bool promptToPlayAgain();
 
     void makePlayers();
 
     PlayerType nextTurn(PlayerType currentTurn);
-    Player* getPlayer(PlayerType type);
+    Player *getPlayer(PlayerType type);
 
     void initScreen();
 
@@ -54,15 +56,18 @@ public:
     void runGame();
 
     // test functions
-    const Player* getLeftPlayer() const {
+    const Player *getLeftPlayer() const
+    {
         return leftPlayer;
     }
 
-    const Player* getRightPlayer() const {
+    const Player *getRightPlayer() const
+    {
         return rightPlayer;
     }
 
-    void setParametersForTest(Player* left, Player* right, int n, int diff) {
+    void setParametersForTest(Player *left, Player *right, int n, int diff)
+    {
         leftPlayer = left;
         rightPlayer = right;
         numberOfPancakes = n;

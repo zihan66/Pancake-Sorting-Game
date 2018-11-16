@@ -34,4 +34,5 @@ public:
     void selectPancake(long unsigned int pancakeIndex, const Player* player);
 	void deselectPancake(long unsigned int pancakeIndex, const Player* player); //will be used to stop a previously selected pancake from blinking
     int moveAndSelectPancake(const Player* player); //allows user to select their pancake in the GUI
+    bool displayEndGameScreen(string message, vector<Score> scores, string initials);
 };

@@ -14,7 +14,7 @@ tests: Tests.o $(OBJECTS)
 
 Main.o: GameManager.h
 Tests.o: GameManager.h Score.h HumanPlayer.h TestPlayer.h
-GameManager.o: GameManager.h IOManager.h Score.h Player.h PlayerType.h
+GameManager.o: GameManager.h IOManager.h Score.h Player.h PlayerType.h EndGame.h
 IOManager.o: IOManager.h Score.h Player.h PlayerType.h
 Player.o: Player.h find_solution.h
 HumanPlayer.o: IOManager.h HumanPlayer.h Player.h

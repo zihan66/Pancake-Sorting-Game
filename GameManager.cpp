@@ -12,6 +12,8 @@
 #include "HumanPlayer.h"
 #include "AIPlayer.h"
 
+#include "EndGame.h"
+
 #define FILENAME "scores"
 
 using namespace std;
@@ -215,7 +217,7 @@ PlayerType GameManager::checkGameOver()
     return PlayerType::None;
 }
 
-void GameManager::displayGameOver(PlayerType winner)
+string GameManager::gameOver(PlayerType winner)
 {
     string msg;
     switch (winner)
@@ -229,24 +231,24 @@ void GameManager::displayGameOver(PlayerType winner)
     case PlayerType::Both:
         msg = "You tied with the AI!";
         break;
-        default:
+    default:
         msg = "No one wins!";
         break;
     }
 
-    ioManager->displayMessage("Game Over!\n\n" + msg);
+    return string;
 }
 
-void GameManager::displayAndWriteFinalScore(int score)
+void GameManager::displayAndWriteFinalScore(int score, string message)
 {
-    ioManager->displayMessage("Your final score is " + to_string(score) + "!");
     vector<Score> scores = getScoresFromFile();
     ofstream outFile(FILENAME);
 
     scores.push_back(Score(playerInitials, score));
     sort(scores.begin(), scores.end(), [](Score &a, Score &b) { return a.score > b.score; });
 
-    ioManager->displayScores(scores);
+    bool playAgain;
+    ioManager->displayEndGameScreen(message, scores, e.initials, &playAgain);
 
     scores.resize(5);
 
@@ -263,11 +265,6 @@ void GameManager::displayAndWriteFinalScore(int score)
         int s = e.score;
         outFile << i << " " << s << endl;
     }
-}
-
-bool GameManager::promptToPlayAgain()
-{
-    return ioManager->promptYesNo("Would you like to play again? (y/n): ");
 }
 
 void GameManager::makePlayers()
@@ -373,9 +370,9 @@ void GameManager::runGame()
 
         PlayerType gameWinner = gameLoop();
 
-        displayGameOver(gameWinner);
+        string message = gameOver(gameWinner);
         int score = calculateScore();
-        displayAndWriteFinalScore(score);
+        displayAndWriteFinalScore(score, message);
 
         userChoice = promptToPlayAgain();
     }

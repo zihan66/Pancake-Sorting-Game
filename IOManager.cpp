@@ -7,6 +7,9 @@
 
 #include <curses.h>
 
+#include "Window.h"
+#include "Point.h"
+
 #include "IOManager.h"
 
 using namespace std;
@@ -353,3 +356,6 @@ void IOManager::drawPancake(long unsigned int pancakeIndex, int pancakeSize, Pla
     }
 }
 
+bool displayEndGameScreen(string message, vector<Score> scores, string initials, bool* playAgain) {
+    Graph_lib::EndGame endGame(message, scores, initials, playAgain);
+}
