@@ -1,7 +1,7 @@
 #include <algorithm>
 
 #include "Player.h"
-#include "find_solution.h"
+//#include "find_solution.h"
 
 using namespace std;
 
@@ -25,7 +25,7 @@ void Player::executeMove(int index) {
         reverse(stack.begin(), stack.begin() + index + 1);
     }
 }
-
+/*
 vector<int> Player::getSolution() const {
     vector<int>* foundSolution = find_solution(getStack());
 
@@ -39,3 +39,4 @@ vector<int> Player::getSolution() const {
 
     return solution;
 }
+*/

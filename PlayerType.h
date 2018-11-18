@@ -1,8 +1,7 @@
 #pragma once
 
 enum class PlayerType {
-    None = 0,
-    LeftSide = 1,
-    RightSide = 2,
-    Both
+    NONE = 0,
+    LEFTSIDE = 1,
+    RIGHTSIDE = 2
 };
