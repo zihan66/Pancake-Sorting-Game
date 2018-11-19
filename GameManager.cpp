@@ -4,9 +4,6 @@
 #include <iostream>
 #include <random>
 #include <sstream>
-#include <vector>
-
-#include <curses.h>
 
 #include "GameManager.h"
 #include "HumanPlayer.h"
@@ -188,8 +185,8 @@ int GameManager::calculateScore()
 {
     int n = numberOfPancakes;
     int diff = difficulty;
-    const std::vector<int> &humanStack = leftPlayer->getStack();
-    const std::vector<int> &aiStack = rightPlayer->getStack();
+    const vector<int> &humanStack = leftPlayer->getStack();
+    const vector<int> &aiStack = rightPlayer->getStack();
     bool humanStackSorted = is_sorted(humanStack.begin(), humanStack.end());
     bool aiStackSorted = is_sorted(aiStack.begin(), aiStack.end());
     if (aiStackSorted && !humanStackSorted)
@@ -205,8 +202,8 @@ int GameManager::calculateScore()
 
 PlayerType GameManager::checkGameOver()
 {
-    const std::vector<int> &leftStack = leftPlayer->getStack();
-    const std::vector<int> &rightStack = rightPlayer->getStack();
+    const vector<int> &leftStack = leftPlayer->getStack();
+    const vector<int> &rightStack = rightPlayer->getStack();
     bool leftSorted = is_sorted(leftStack.begin(), leftStack.end());
     bool rightSorted = is_sorted(rightStack.begin(), rightStack.end());
 
@@ -214,7 +211,7 @@ PlayerType GameManager::checkGameOver()
         return PlayerType::Both;
     if (leftSorted || rightSorted)
         return (leftSorted) ? PlayerType::LeftSide : PlayerType::RightSide;
-    return PlayerType::None;
+    return PlayerType::Neither;
 }
 
 string GameManager::gameOver(PlayerType winner)
@@ -236,7 +233,7 @@ string GameManager::gameOver(PlayerType winner)
         break;
     }
 
-    return string;
+    return msg;
 }
 
 void GameManager::displayAndWriteFinalScore(int score, string message)
@@ -248,7 +245,7 @@ void GameManager::displayAndWriteFinalScore(int score, string message)
     sort(scores.begin(), scores.end(), [](Score &a, Score &b) { return a.score > b.score; });
 
     bool playAgain;
-    ioManager->displayEndGameScreen(message, scores, e.initials, &playAgain);
+    ioManager->displayEndGameScreen(message, scores, playerInitials, &playAgain);
 
     scores.resize(5);
 
@@ -299,7 +296,7 @@ PlayerType GameManager::nextTurn(PlayerType currentTurn)
         return PlayerType::LeftSide;
     default:
         // should not reach this
-        return PlayerType::None;
+        return PlayerType::Neither;
     }
 }
 
@@ -330,8 +327,8 @@ void GameManager::initScreen()
 
 PlayerType GameManager::gameLoop()
 {
-    PlayerType winner = PlayerType::None;
-    while (winner == PlayerType::None)
+    PlayerType winner = PlayerType::Neither;
+    while (winner == PlayerType::Neither)
     {
         ioManager->drawStacks(leftPlayer, rightPlayer);
 

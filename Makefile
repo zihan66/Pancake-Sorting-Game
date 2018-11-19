@@ -1,24 +1,25 @@
 CXX = g++-8.2.0
 CXXFLAGS = -std=c++2a -Wall -Wextra -pedantic -fsanitize=address,undefined,pointer-compare,pointer-subtract -fstack-clash-protection -g -fno-omit-frame-pointer
-LDLIBS = -lncurses++ -lmenu -lpanel -lform -lutil -lncurses
+LDLIBS = -lfltk -lfltk_images -lX11 -ljpeg
 
-OBJECTS = GameManager.o IOManager.o Player.o HumanPlayer.o AIPlayer.o
+OBJECTS = GameManager.o IOManager.o Player.o HumanPlayer.o AIPlayer.o EndGame.o
 
 all: pancakes
 
 pancakes: Main.o $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o pancakes Main.o $(OBJECTS) find_solution.o $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -o pancakes Main.o $(OBJECTS) $(LDLIBS)
 
 tests: Tests.o $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o tests Tests.o $(OBJECTS) find_solution.o $(LDLIBS)
+	$(CXX) $(CXXFLAGS) -o tests Tests.o $(OBJECTS) $(LDLIBS)
 
 Main.o: GameManager.h
 Tests.o: GameManager.h Score.h HumanPlayer.h TestPlayer.h
 GameManager.o: GameManager.h IOManager.h Score.h Player.h PlayerType.h EndGame.h
-IOManager.o: IOManager.h Score.h Player.h PlayerType.h
-Player.o: Player.h find_solution.h
+IOManager.o: IOManager.h Score.h Player.h PlayerType.h EndGame.h
+Player.o: Player.h
 HumanPlayer.o: IOManager.h HumanPlayer.h Player.h
 AIPlayer.o: AIPlayer.h Player.h
+EndGame.o: EndGame.h
 
 .PHONY: clean
 clean:

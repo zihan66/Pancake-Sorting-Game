@@ -1,21 +1,21 @@
 #pragma once
 
 #include <vector>
+#include "std_lib_facilities_5.h"
 
 #include "PlayerType.h"
 
 class Player {
 protected:
-    std::vector<int> stack;
+    vector<int> stack;
     PlayerType type;
  public:
-    Player(const std::vector<int>& s, PlayerType t);
+    Player(const vector<int>& s, PlayerType t);
     virtual ~Player();
 	
 	PlayerType getPlayerType() const;
-    const std::vector<int>& getStack() const;
+    const vector<int>& getStack() const;
 
-    std::vector<int> getSolution() const;
     void executeMove(int index);
 
     virtual int getMove() = 0;

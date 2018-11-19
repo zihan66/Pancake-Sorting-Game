@@ -1,7 +1,6 @@
 #include <algorithm>
 
 #include "Player.h"
-#include "find_solution.h"
 
 using namespace std;
 
@@ -24,18 +23,4 @@ void Player::executeMove(int index) {
     if (index > 0 && index < (int)stack.size()) {
         reverse(stack.begin(), stack.begin() + index + 1);
     }
-}
-
-vector<int> Player::getSolution() const {
-    vector<int>* foundSolution = find_solution(getStack());
-
-    vector<int> solution;
-
-    for (int& step : *foundSolution) {
-        solution.push_back(step - 1);
-    }
-
-    delete foundSolution;
-
-    return solution;
 }

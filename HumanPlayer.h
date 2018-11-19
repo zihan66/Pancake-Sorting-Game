@@ -8,6 +8,6 @@ class HumanPlayer : public Player {
 private:
     IOManager* const ioManager;
 public:
-    HumanPlayer(const std::vector<int>& s, PlayerType t, IOManager* const ioManager);
+    HumanPlayer(const vector<int>& s, PlayerType t, IOManager* const ioManager);
     int getMove();
 };

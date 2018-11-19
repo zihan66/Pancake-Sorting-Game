@@ -6,7 +6,7 @@
 
 class AIMoveTree {
 private:
-    std::vector<AIMoveTree*> children;
+    vector<AIMoveTree*> children;
     AIMove move;
 public:
     AIMoveTree(AIMove m) : move(m) { }
@@ -20,7 +20,7 @@ public:
         return move;
     }
 
-    const std::vector<AIMoveTree*>& getChildren() const {
+    const vector<AIMoveTree*>& getChildren() const {
         return children;
     }
 

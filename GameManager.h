@@ -1,8 +1,9 @@
 #pragma once
 #include <iostream>
-#include <string>
-#include <vector>
 #include <unistd.h>
+#include "std_lib_facilities_5.h"
+#include "Gui.h"
+#include "Graph.h"
 
 #include "IOManager.h"
 #include "Score.h"
@@ -13,7 +14,7 @@ class GameManager
   private:
     int difficulty;
     int numberOfPancakes;
-    std::string playerInitials;
+    string playerInitials;
 
     Player *leftPlayer;
     Player *rightPlayer;
@@ -32,16 +33,16 @@ class GameManager
 
     int *getInitialStack(int size);
 
-    std::vector<Score> getScoresFromFile();
-    std::string promptForInitials();
-    void displayScores(std::string initials);
+    vector<Score> getScoresFromFile();
+    string promptForInitials();
+    void displayScores(string initials);
     void displaySplash();
     void displayInstructions();
 
     int calculateScore();
 
     PlayerType checkGameOver();
-    std::string gameOver(PlayerType winner);
+    string gameOver(PlayerType winner);
     void displayAndWriteFinalScore(int score, string message);
     bool promptToPlayAgain();
 
