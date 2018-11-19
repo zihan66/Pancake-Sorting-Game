@@ -4,25 +4,20 @@
 #include <iostream>
 #include <random>
 #include <sstream>
+#include "EndGame.h"
 
 #include "GameManager.h"
 #include "HumanPlayer.h"
 #include "AIPlayer.h"
 
-#include "EndGame.h"
-
 #define FILENAME "scores"
 
 using namespace std;
 
-GameManager::GameManager() : leftPlayer(0), rightPlayer(0)
-{
-    ioManager = new IOManager();
-}
+GameManager::GameManager() : leftPlayer(0), rightPlayer(0) {}
 
 GameManager::~GameManager()
 {
-    delete ioManager;
     if (leftPlayer != 0)
         delete leftPlayer;
     if (rightPlayer != 0)
@@ -236,7 +231,7 @@ string GameManager::gameOver(PlayerType winner)
     return msg;
 }
 
-void GameManager::displayAndWriteFinalScore(int score, string message)
+bool GameManager::displayAndWriteFinalScore(int score, string message)
 {
     vector<Score> scores = getScoresFromFile();
     ofstream outFile(FILENAME);
@@ -244,11 +239,11 @@ void GameManager::displayAndWriteFinalScore(int score, string message)
     scores.push_back(Score(playerInitials, score));
     sort(scores.begin(), scores.end(), [](Score &a, Score &b) { return a.score > b.score; });
 
-    bool playAgain;
-    ioManager->displayEndGameScreen(message, scores, playerInitials, &playAgain);
 
     scores.resize(5);
 
+    bool playAgain;
+    EndGame endGameScreen(message, scores&playAgain);
     if (!outFile)
     {
         cerr << "Failed to open scores file." << endl;
@@ -262,6 +257,7 @@ void GameManager::displayAndWriteFinalScore(int score, string message)
         int s = e.score;
         outFile << i << " " << s << endl;
     }
+    return playAgain;
 }
 
 void GameManager::makePlayers()
@@ -354,7 +350,6 @@ PlayerType GameManager::gameLoop()
 
 void GameManager::runGame()
 {
-    initScreen();
     displaySplash();
     displayInstructions();
 
@@ -369,10 +364,6 @@ void GameManager::runGame()
 
         string message = gameOver(gameWinner);
         int score = calculateScore();
-        displayAndWriteFinalScore(score, message);
-
-        userChoice = promptToPlayAgain();
+        userChoice = displayAndWriteFinalScore(score, message);
     }
-
-    endwin();
 }
