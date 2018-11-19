@@ -1,6 +1,6 @@
 # Configuration
 CC = $(shell fltk-config --cxx)
-SRCS = Startmenu.cpp
+SRCS = Startmenu.cpp AIPlayer.cpp Player.cpp HumanPlayer.cpp
 OBJS = ${SRCS:.cpp=.o}
 BASEFLAGS = -g -Wall -Wextra -std=c++11 -Wno-unused-parameter -w 
 # BASEFLAGS += -pedantic -fsanitize=address,undefined
@@ -16,7 +16,7 @@ SAMPLEOBJ = $(LIBDIR)/sample_main5.o
 
 # Compiler Flags
 CFLAGS = $(BASEFLAGS) $(shell fltk-config --use-images --cxxflags)
-LDFLAGS = $(BASEFLAGS) $(shell fltk-config --use-images --ldflags)
+LDFLAGS = $(BASEFLAGS) -lfltk -lfltk_images
 
 .PHONY: all clean run sample
 .SUFFIXES:
