@@ -6,14 +6,15 @@
 Pancake_window::Pancake_window(Point xy, int w, int h, const string& title)
     : Window{ xy, w, h, title }
     , quit(Point(515, 530), 70, 30, "Quit", cb_quit)
-    , next(Point(315, 530), 70, 30, "next", cb_instrunction)
+  //  , next(Point(315, 530), 70, 30, "next", cb_instrunction)
 	  {
-		 v.push_back(2);
-		 v.push_back(6);
+		 
 		 v.push_back(4);
-         v.push_back(7);
+         v.push_back(3);
 		 v.push_back(1);
 		 v.push_back(5);
+         v.push_back(2);
+         v.push_back(6);
 
     human = new HumanPlayer(v, PlayerType::LEFTSIDE);
     humanstack = human->getStack();
@@ -24,10 +25,9 @@ Pancake_window::Pancake_window(Point xy, int w, int h, const string& title)
         game_init();
 
     a = new AIPlayer(v, PlayerType::RIGHTSIDE, 4);
-  //  ai_index = a->getMove();
     AIstack = a->getStack();
 
-        attach(next);
+     //   attach(next);
 	}
 
 int Pancake_window::find_index(int n){
@@ -39,6 +39,8 @@ int Pancake_window::find_index(int n){
 }
 
 void Pancake_window::init_pancake(){
+
+
 	int start_y = start_position(humanstack.size()); // get y position of the smallest button
 	int width = 40;
 	int center = 115;
@@ -48,13 +50,17 @@ void Pancake_window::init_pancake(){
     label = std::to_string(humanstack.at(i));
     width = 30 + humanstack.at(i)*10;
 		buttons.push_back(new My_Button(Point{center-width/2, start_y}, width, 40, label , cb_button));
-    //buttons[i]->set_colors(fl_rgb_color(20,58,19),fl_rgb_color(20,58,19));
+    //buttons[i]->set_colors(fl_rgb_color(20,58,19),fl_rgbs_color(20,58,19));
 		attach(*buttons[i]);
 		start_y+=50;
 	}
+    Text* Human = new Text(Point(86, 35), "Human Player: " );
+    attach(*Human);
 }
 
 void Pancake_window::update_buttons(){
+
+
   int start_y = start_position(humanstack.size()); // get y position of the smallest button
 	int width;
 	int center = 115;
@@ -97,6 +103,9 @@ void Pancake_window::cb_button(Address ab, Address pw){
 }
 
 void Pancake_window::handle_button(Fl_Button* button){
+
+PlayerType winner = PlayerType::NONE;
+    
   int n = find(button);
   int index = find_index(n);
   for(int i=0;i<3;i++){
@@ -109,13 +118,31 @@ void Pancake_window::handle_button(Fl_Button* button){
   human->executeMove(index);
   //cerr<<humanstack[0];
 
-  if(index > 0 && index < buttons.size()) {
-        std::reverse(buttons.begin(),buttons.begin()+index+1);
-  }
-	update_buttons();
+    if(index > 0 && index < buttons.size()) {
+            std::reverse(buttons.begin(),buttons.begin()+index+1);
+     }
+	       update_buttons();
 
+
+ int ai_index = a->getMove();
+
+    a->executeMove(ai_index);
+
+    if(ai_index > 0 && ai_index < b1.size()) 
+        std::reverse(b1.begin(),b1.begin()+ai_index+1);
+
+    update_buttons_ai();
+
+ winner = checkGameOver();
+
+ if (winner != PlayerType::NONE)
+{
+    hide();
+}
 
 }
+
+
 
 int Pancake_window::find(Fl_Button* button){
   for(int i=0;i<buttons.size();i++){
@@ -127,38 +154,49 @@ int Pancake_window::find(Fl_Button* button){
 
 //-----------------------------------------------------------------------
 
-void Pancake_window::cb_instrunction(Address, Address pw)
-{
+void Pancake_window::update_buttons_ai(){
 
-    reference_to<Pancake_window>(pw).update();
+//PlayerType winner = PlayerType::NONE;
+//while(winner == PlayerType::NONE)
+//{
+  int start_y = start_position(AIstack.size()); // get y position of the smallest button
+    int width;
+    int center = 380;
+  string label;
+
+ AIstack= a->getStack();
+
+  for(int i = 0; i < AIstack.size(); i++){
+    detach(*b1[i]);
+  }
+  b1.clear();
+
+    for(int i = 0; i < AIstack.size(); i++){
+    label = std::to_string(AIstack.at(i));
+    width = 30 + AIstack.at(i) * 10;
+         b1.push_back(new Button(Point(center-width/2,start_y),width,40,label,cb_instrunction1));
+    //buttons[i]->set_colors(fl_rgb_color(20,58,19),fl_rgb_color(20,58,19));
+        attach(*b1[i]);
+        start_y+=50;
+    }
+  redraw();
+
+//}
 
 }
 
-
-void Pancake_window::update()
+PlayerType Pancake_window::checkGameOver()
 {
-    AIstack = a->getStack();
-    for(int i=0;i<b1.size();i++)
-      {  
-        detach(*(b1.at(i)));
-      }
+    const std::vector<int> &leftStack = human->getStack();
+    const std::vector<int> &rightStack = a->getStack();
+    bool leftSorted = is_sorted(leftStack.begin(), leftStack.end());
+    bool rightSorted = is_sorted(rightStack.begin(), rightStack.end());
 
-    cerr << "update pancake" << endl;
-
-    b1.clear();
-
-    ai_index = a->getMove();
-
-    a->executeMove(ai_index);
-
-
-    if(ai_index > 0 && ai_index < b1.size()) {
-        std::reverse(b1.begin(),b1.begin()+ai_index+1);
-  }
-  
-
-    game_init();
-    redraw();
+   // if (leftSorted && rightSorted)
+    //    return PlayerType::BOTH;
+    if (leftSorted || rightSorted)
+        return (leftSorted) ? PlayerType::LEFTSIDE : PlayerType::RIGHTSIDE;
+    return PlayerType::NONE;
 }
 
 void Pancake_window::game_init()
@@ -184,6 +222,8 @@ for(int i=0;i<AIstack.size();i++)
     x +=5;
 }
 
+ Text* ai = new Text(Point(350, 35), "AI Player: " );
+    attach(*ai);
 }
 
 void Pancake_window::cb_instrunction1(Address, Address pw)
@@ -195,6 +235,7 @@ void Pancake_window::cb_instrunction1(Address, Address pw)
 
 void Pancake_window::nothing()
 {
+
 }
 
 
@@ -202,7 +243,6 @@ int main() try {
     cerr << "Program Started" << endl;
     Pancake_window win{ Point{ 100, 100 }, 600, 600, "Sliding Button" };
     cerr << "Program Started" << endl;
-
 
     return gui_main();
 }
