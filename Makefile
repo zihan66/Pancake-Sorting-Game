@@ -1,6 +1,6 @@
 # Configuration
 CC = $(shell fltk-config --cxx)
-SRCS = Startmenu.cpp AIPlayer.cpp Player.cpp
+SRCS = Startmenu.cpp AIPlayer.cpp Player.cpp HumanPlayer.cpp EndGame.cpp
 OBJS = ${SRCS:.cpp=.o}
 BASEFLAGS = -g -Wall -Wextra -std=c++11 -Wno-unused-parameter -w 
 # BASEFLAGS += -pedantic -fsanitize=address,undefined
