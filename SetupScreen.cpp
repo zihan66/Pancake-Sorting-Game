@@ -15,4 +15,8 @@ SetupScreen::SetupScreen()
 void callbackRand(Fl_Widget *butt, void *d)
 {
 	
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> add900a81806461caf97c5553a4ce11fe45b9e4c
