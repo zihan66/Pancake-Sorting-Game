@@ -4,6 +4,7 @@
 #include <iostream>
 #include <random>
 #include <sstream>
+
 #include "EndGame.h"
 
 #include "GameManager.h"
@@ -22,69 +23,6 @@ GameManager::~GameManager()
         delete leftPlayer;
     if (rightPlayer != 0)
         delete rightPlayer;
-}
-
-int GameManager::getNumberOfPancakes()
-{
-    return ioManager->promptForNumber("Enter the number of pancakes (2-9): ", 2, 9);
-}
-
-int GameManager::getAIDifficulty(int maxDifficulty)
-{
-    ostringstream ss;
-    ss << "Enter a number for the AI difficulty (1-" << maxDifficulty << "): ";
-
-    return ioManager->promptForNumber(ss.str(), 1, maxDifficulty);
-}
-
-template <class TElement>
-void printArray(ostream &os, TElement *array, int size, int i)
-{
-    os << "[";
-    for (int j = 0; j < size; j++)
-    {
-        if (j > 0)
-            os << ", ";
-
-        if (j < i)
-            os << array[j];
-        else
-        {
-            os << "_";
-        }
-    }
-    os << "]";
-}
-
-int *GameManager::promptForInitialStack(int size)
-{
-    int *stack = new int[size];
-    int i = 0;
-    while (i < size)
-    {
-        ostringstream ss;
-        printArray(ss, stack, size, i);
-        ss << endl
-           << "Please input pancake #" << i << " (1-" << size << "): ";
-        int input = ioManager->promptForNumber(ss.str(), 1, size);
-
-        // ensure the values aren't repeated
-        if (find(&stack[0], &stack[i], input) != &stack[i])
-        {
-            beep();
-            continue;
-        }
-        stack[i] = input;
-        i++;
-
-        // make sure array isn't already sorted
-        if (i == size && is_sorted(&stack[0], &stack[size]))
-        {
-            ioManager->displayMessage("Given pancake stack is already sorted.");
-            i = 0;
-        }
-    }
-    return stack;
 }
 
 int *GameManager::getRandomInitialStack(int size)
@@ -129,51 +67,6 @@ vector<Score> GameManager::getScoresFromFile()
         }
     }
     return scores;
-}
-
-int *GameManager::getInitialStack(int size)
-{
-    bool manual = ioManager->promptYesNo("Do you want to enter the initial stack manually? (y/n): ");
-    if (manual)
-    {
-        return promptForInitialStack(size);
-    }
-    else
-    {
-        return getRandomInitialStack(size);
-    }
-}
-
-string GameManager::promptForInitials()
-{
-    return ioManager->prompt("Enter your initials: ");
-}
-
-void GameManager::displayScores(string initials)
-{
-    vector<Score> scores = getScoresFromFile();
-    sort(scores.begin(), scores.end(), Score());
-    if (scores.size() > 5)
-    {
-        vector<Score> sub(scores.begin(), scores.begin() + 5);
-        sub.push_back(Score(initials, 0));
-        ioManager->displayScores(sub);
-    }
-    else
-    {
-        scores.push_back(Score(initials, 0));
-        ioManager->displayScores(scores);
-    }
-}
-
-void GameManager::displaySplash()
-{
-    ioManager->showSplashScreen();
-}
-
-void GameManager::displayInstructions()
-{
-    ioManager->displayInstructions();
 }
 
 int GameManager::calculateScore()
@@ -239,11 +132,9 @@ bool GameManager::displayAndWriteFinalScore(int score, string message)
     scores.push_back(Score(playerInitials, score));
     sort(scores.begin(), scores.end(), [](Score &a, Score &b) { return a.score > b.score; });
 
-
     scores.resize(5);
-
     bool playAgain;
-    EndGame endGameScreen(message, scores&playAgain);
+    EndGame endGameScreen(message, scores, &playAgain);
     if (!outFile)
     {
         cerr << "Failed to open scores file." << endl;
@@ -310,55 +201,24 @@ Player *GameManager::getPlayer(PlayerType type)
     }
 }
 
-void GameManager::initScreen()
-{
-    initscr();
-    start_color();
-    init_pair(1, COLOR_BLACK, COLOR_WHITE);
-    init_pair(2, COLOR_WHITE, COLOR_BLUE);
-    noecho();
-    curs_set(0);
-    keypad(stdscr, true);
-}
-
 PlayerType GameManager::gameLoop()
 {
-    PlayerType winner = PlayerType::Neither;
-    while (winner == PlayerType::Neither)
-    {
-        ioManager->drawStacks(leftPlayer, rightPlayer);
-
-        // Player move
-        int playerMove = leftPlayer->getMove();
-        ioManager->blinkPancakes(playerMove, leftPlayer);
-        leftPlayer->executeMove(playerMove);
-
-        ioManager->drawStacks(leftPlayer, rightPlayer);
-
-        // AI move
-        if (difficulty > 5)
-            ioManager->drawAIThinking(numberOfPancakes, difficulty);
-        int aiMove = rightPlayer->getMove();
-        ioManager->blinkPancakes(aiMove, rightPlayer);
-        rightPlayer->executeMove(aiMove);
-
-        winner = checkGameOver();
-    }
+    PlayerType* winner = PlayerType::Neither;
+    // Add window for main game
 
     return winner;
 }
 
 void GameManager::runGame()
 {
-    displaySplash();
-    displayInstructions();
+    // Splash Screen
 
+    // Setup screen
     bool userChoice = true;
     while (userChoice)
     {
         makePlayers();
-        playerInitials = promptForInitials();
-        displayScores(playerInitials);
+        playerInitials = "AMS";
 
         PlayerType gameWinner = gameLoop();
 
