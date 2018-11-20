@@ -48,7 +48,6 @@ namespace Graph_lib {
 
         virtual ~Widget() { }
 
-    protected:
         Window* own;    // every Widget belongs to a Window
         Fl_Widget* pw;  // connection to the FLTK Widget
     private:

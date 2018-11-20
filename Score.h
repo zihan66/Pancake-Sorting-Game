@@ -14,4 +14,8 @@ struct Score
     {
         return (s1.score > s2.score);
     }
+
+    string getText() {
+        return initials + " " + to_string(score);
+    }
 };

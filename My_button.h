@@ -1,10 +1,13 @@
-#include "Simple_window.h"
+#include "GUI.h"
 #include "Graph.h"
 #include "Window.h"
 #include "Point.h"
 
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
+
+using namespace Graph_lib;
+
 struct My_Button :Graph_lib::Button{
   My_Button(Point xy, int w, int h, const string& label, Callback cb)
 		: Button(xy, w, h, label, cb)

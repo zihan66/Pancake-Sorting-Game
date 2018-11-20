@@ -6,6 +6,7 @@
 #include <sstream>
 
 #include "EndGame.h"
+#include "Startmenu.h"
 
 #include "GameManager.h"
 #include "HumanPlayer.h"
@@ -158,16 +159,15 @@ void GameManager::makePlayers()
     if (rightPlayer != nullptr)
         delete rightPlayer;
 
-    numberOfPancakes = getNumberOfPancakes();
-    difficulty = getAIDifficulty(numberOfPancakes);
-    int *initialStack = getInitialStack(numberOfPancakes);
+    // Setup screen
 
     // copy initial stack to vector
+    int* initialStack = new int[4];
     vector<int> leftStack(&initialStack[0], &initialStack[numberOfPancakes]);
     // make a copy for the right player
     vector<int> rightStack = leftStack;
 
-    leftPlayer = new HumanPlayer(leftStack, PlayerType::LeftSide, ioManager);
+    leftPlayer = new HumanPlayer(leftStack, PlayerType::LeftSide);
     rightPlayer = new AIPlayer(rightStack, PlayerType::RightSide, difficulty);
 
     delete[] initialStack;
@@ -203,9 +203,9 @@ Player *GameManager::getPlayer(PlayerType type)
 
 PlayerType GameManager::gameLoop()
 {
-    PlayerType* winner = PlayerType::Neither;
+    PlayerType winner = PlayerType::Neither;
     // Add window for main game
-
+    Pancake_window window(leftPlayer, rightPlayer, &winner);
     return winner;
 }
 
@@ -213,7 +213,6 @@ void GameManager::runGame()
 {
     // Splash Screen
 
-    // Setup screen
     bool userChoice = true;
     while (userChoice)
     {

@@ -4,7 +4,6 @@
 
 #include "Player.h"
 #include "AIMoveTree.h"
-#include "Test.h"
 
 class AIPlayer : public Player {
 private:
