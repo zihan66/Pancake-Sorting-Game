@@ -1,0 +1,33 @@
+@B0 -
+@B0@C88@c@l@b HOW TO PLAY:
+@B0
+@B0@C255@c@m You will start with an out-of-order stack of pancakes of different sizes.
+@B0
+@B0@C255@c@m The objective is to order the stack from smallest to largest at the bottom.
+@B0
+@B0@C255@c@m To play you will select a pancake, and it will flip each pancake above it.
+@B0
+@B0@C255@c@m Click a pancake. Everything above that pancake will flip. 
+@B0
+@B0@C255@c@m You will be playing against an AI and your goal is to beat it.
+@B0
+@B0@C255@c@m Your score will increase with a harder AI and more pancakes.
+@B0
+@B0@C255@c@l@b Good luck and have fun!
+@B0 -
+@B0 -
+@B0@C88@c@l Created by: 
+@B0@C255@c@m Joey Whitmore
+@B0@C255@c@m Andrew Schmid 
+@B0@C255@c@m Jack Shirley
+@B0@C255@c@m Omar Santos 
+@B0@C255@c@m Zack Stach
+@B0@C255@c@m Zihan Wei
+@B0@C255@c@m Cindy Zhang
+@B0 -
+@B0 -
+@B0 -
+@B0 - 
+@B0 -
+@B0 -
+@B0 -
