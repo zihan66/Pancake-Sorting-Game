@@ -18,7 +18,7 @@ struct Pancake_window : Graph_lib::Window
     int difficulty;
     void nothing();
     //int ai_index;
-
+    bool c;
     PlayerType checkGameOver();
 
     vector<Button *> b1;

@@ -4,15 +4,17 @@
 #include <unistd.h>
 
 Pancake_window::Pancake_window(Player *human, Player *ai, PlayerType *winner)
-    : Window{Point{100, 100}, 600, 600, "Pancake Game"}, quit(Point(430, 530), 70, 30, "Quit", cb_quit), winner1(winner)
+    : Window{Point{100, 100}, 600, 600, "Pancake Game"}, quit(Point(430, 530), 70, 30, "Quit", cb_quit), c(false)
 {
     _human = human;
     _ai = ai;
+    winner1 = winner;
 
     init_pancake();
     attach(quit);
 
     game_init();
+    Fl::run();
 }
 
 int Pancake_window::find_index(int n)
@@ -120,7 +122,7 @@ void Pancake_window::handle_button(Fl_Button *button)
 
     if (final_winner != PlayerType::Neither)
     {
-        winner1 = &final_winner;
+        *winner1 = final_winner;
         hide();
     }
 }

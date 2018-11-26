@@ -4,11 +4,9 @@
 #include "std_lib_facilities_5.h"
 #include "GUI.h"
 #include "Graph.h"
-
-#include "Score.h"
 #include "Player.h"
 #include "PlayerType.h"
-
+#include "Score.h"
 class GameManager
 {
   private:
@@ -24,7 +22,7 @@ class GameManager
     ~GameManager();
 
     int *promptForInitialStack(int size);
-    int *getRandomInitialStack(int size);
+    vector<int> getRandomInitialStack(int size);
 
     vector<Score> getScoresFromFile();
     void displayScores(string initials);

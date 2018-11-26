@@ -6,7 +6,7 @@ struct Score
     string initials;
     int score;
 
-    Score() {}
+    Score(): initials("N/A"), score(0){}
     Score(const string &initials, int score)
         : initials(initials), score(score) {}
 

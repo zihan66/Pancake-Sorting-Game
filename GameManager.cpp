@@ -7,12 +7,12 @@
 
 #include "EndGame.h"
 #include "Startmenu.h"
-
+#include "InstructionWindow.h"
 #include "GameManager.h"
 #include "HumanPlayer.h"
 #include "AIPlayer.h"
-
-#define FILENAME "scores"
+#include "SetupScreen.h"
+#define FILENAME "scores.txt"
 
 using namespace std;
 
@@ -26,22 +26,21 @@ GameManager::~GameManager()
         delete rightPlayer;
 }
 
-int *GameManager::getRandomInitialStack(int size)
+vector<int> GameManager::getRandomInitialStack(int size)
 {
-    int *stack = new int[size];
+  vector<int> stack;
     for (int i = 0; i < size; i++)
     {
-        stack[i] = i + 1;
+        stack.push_back(i + 1);
     }
 
     bool sorted = true;
     while (sorted)
     {
         // get a random seed and use it in shuffle to randomize the array.
-        int seed = chrono::system_clock::now().time_since_epoch().count();
-        shuffle(&stack[0], &stack[size], default_random_engine(seed));
+        random_shuffle(stack.begin(), stack.end());
 
-        sorted = is_sorted(&stack[0], &stack[size]);
+        sorted = is_sorted(stack.begin(), stack.end());
     }
 
     return stack;
@@ -159,18 +158,25 @@ void GameManager::makePlayers()
     if (rightPlayer != nullptr)
         delete rightPlayer;
 
-    // Setup screen
-
     // copy initial stack to vector
-    int* initialStack = new int[4];
-    vector<int> leftStack(&initialStack[0], &initialStack[numberOfPancakes]);
+    vector<Score> scores = getScoresFromFile();
+    string scoreString = "";
+    for(auto score: scores)
+      scoreString = scoreString + score.getText() + "   ";
+    bool isManual;
+    vector<int> order;
+    SetupScreen screen(scoreString, &isManual, &playerInitials, &difficulty, &numberOfPancakes, &order);
+    if(!isManual) {
+      order = getRandomInitialStack(numberOfPancakes);
+    }
+    vector<int> leftStack(order);
     // make a copy for the right player
     vector<int> rightStack = leftStack;
 
     leftPlayer = new HumanPlayer(leftStack, PlayerType::LeftSide);
     rightPlayer = new AIPlayer(rightStack, PlayerType::RightSide, difficulty);
 
-    delete[] initialStack;
+    //delete[] initialStack;
 }
 
 PlayerType GameManager::nextTurn(PlayerType currentTurn)
@@ -206,13 +212,14 @@ PlayerType GameManager::gameLoop()
     PlayerType winner = PlayerType::Neither;
     // Add window for main game
     Pancake_window window(leftPlayer, rightPlayer, &winner);
+
     return winner;
 }
 
 void GameManager::runGame()
 {
     // Splash Screen
-
+    InstructionWindow win{Point{100, 100 }, 600, 600, "InstructionWindow" };
     bool userChoice = true;
     while (userChoice)
     {
@@ -220,7 +227,6 @@ void GameManager::runGame()
         playerInitials = "AMS";
 
         PlayerType gameWinner = gameLoop();
-
         string message = gameOver(gameWinner);
         int score = calculateScore();
         userChoice = displayAndWriteFinalScore(score, message);
