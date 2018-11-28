@@ -134,7 +134,6 @@ bool GameManager::displayAndWriteFinalScore(int score, string message)
 
     scores.resize(5);
     bool playAgain;
-    EndGame endGameScreen(message, scores, &playAgain);
     if (!outFile)
     {
         cerr << "Failed to open scores file." << endl;
@@ -165,7 +164,7 @@ void GameManager::makePlayers()
       scoreString = scoreString + score.getText() + "   ";
     bool isManual;
     vector<int> order;
-    SetupScreen screen(scoreString, &isManual, &playerInitials, &difficulty, &numberOfPancakes, &order);
+  ]
     if(!isManual) {
       order = getRandomInitialStack(numberOfPancakes);
     }
@@ -211,7 +210,6 @@ PlayerType GameManager::gameLoop()
 {
     PlayerType winner = PlayerType::Neither;
     // Add window for main game
-    Pancake_window window(leftPlayer, rightPlayer, &winner);
 
     return winner;
 }
@@ -219,7 +217,7 @@ PlayerType GameManager::gameLoop()
 void GameManager::runGame()
 {
     // Splash Screen
-    InstructionWindow win{Point{100, 100 }, 600, 600, "InstructionWindow" };
+	
     bool userChoice = true;
     while (userChoice)
     {
