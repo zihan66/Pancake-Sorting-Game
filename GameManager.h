@@ -36,7 +36,7 @@ class GameManager
 
     PlayerType checkGameOver();
     string gameOver(PlayerType winner);
-    bool writeFinalScore(int score, string message);
+    void writeFinalScore(int score);
     void makePlayers();
 
     PlayerType nextTurn(PlayerType currentTurn);

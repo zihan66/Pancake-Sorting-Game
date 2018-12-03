@@ -12,7 +12,9 @@
 #include "HumanPlayer.h"
 
 #define SCORES "scores.txt"
-#define GAMEDATA "game_data.txt"
+#define GAMEDATA "setup.txt"
+#define AISTACKS "AIpancake.txt"
+#define HUMANSTACKS "pancake.txt"
 
 using namespace std;
 
@@ -104,7 +106,8 @@ bool validateGameData(vector<string> lines, GameData &data)
             int number;
             while (iss >> number)
                 data.Order.push_back(number);
-            if(data.Order.size() != data.StackHeight) return false;
+            if (data.Order.size() != data.StackHeight)
+                return false;
         }
         return true;
     }
@@ -168,7 +171,7 @@ string GameManager::gameOver(PlayerType winner)
     return msg;
 }
 
-bool GameManager::writeFinalScore(int score, string message)
+void GameManager::writeFinalScore(int score)
 {
     vector<Score> scores = getScoresFromFile();
     ofstream outFile(SCORES);
@@ -177,7 +180,6 @@ bool GameManager::writeFinalScore(int score, string message)
     sort(scores.begin(), scores.end(), [](Score &a, Score &b) { return a.score > b.score; });
 
     scores.resize(5);
-    bool playAgain;
     if (!outFile)
     {
         cerr << "Failed to open scores file." << endl;
@@ -191,7 +193,6 @@ bool GameManager::writeFinalScore(int score, string message)
         int s = e.score;
         outFile << i << " " << s << endl;
     }
-    return playAgain;
 }
 
 void GameManager::makePlayers()
@@ -249,26 +250,65 @@ Player *GameManager::getPlayer(PlayerType type)
     }
 }
 
+void clearFile(string filename) {
+    ofstream file;
+    file.open(filename, ofstream::out | ofstream::trunc);
+}
+
+void writeStackToFile(vector<int> stack, string filename)
+{
+    ofstream stackFile;
+    stackFile.open(filename.c_str(), ofstream::out | ofstream::app);
+    for(const auto& s: stack)
+        stackFile << s << " ";
+    stackFile << endl;
+}
+
 PlayerType GameManager::gameLoop()
 {
     PlayerType winner = PlayerType::Neither;
-    // Add window for main game
+    while (winner == PlayerType::Neither)
+    {
+        // To clear the file
+        clearFile(HUMANSTACKS);
+        clearFile(AISTACKS);
+
+        writeStackToFile(leftPlayer->getStack(), HUMANSTACKS);
+        writeStackToFile(rightPlayer->getStack(), AISTACKS);
+
+        int playerMove = leftPlayer->getMove();
+        int aiMove = rightPlayer->getMove();
+        leftPlayer->executeMove(playerMove);
+        rightPlayer->executeMove(aiMove);
+
+        winner = checkGameOver();
+    }
 
     return winner;
 }
 
+void writeMessage(string message) {
+    ofstream file(HUMANSTACKS);
+    file << message;
+}
+
 void GameManager::runGame()
 {
-    // Splash Screen
     bool userChoice = true;
     while (userChoice)
     {
         makePlayers();
-        playerInitials = "AMS";
 
         PlayerType gameWinner = gameLoop();
         string message = gameOver(gameWinner);
         int score = calculateScore();
-        userChoice = true;
+        writeFinalScore(score);
+        writeMessage(message);
     }
+
+    remove(SCORES);
+    remove(AISTACKS);
+    remove(HUMANSTACKS);
+    remove(MOVE);
+    remove(GAMEDATA);
 }

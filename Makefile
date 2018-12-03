@@ -21,7 +21,7 @@ $(TARGET): $(OBJS) $(LIB)
 
 # Clean and run
 clean:
-	$(RM) $(TARGET) *.o
+	$(RM) $(TARGET) *.o 
 
 cleanall: clean
 	clean
