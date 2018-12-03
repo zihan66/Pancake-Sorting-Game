@@ -1,18 +1,18 @@
 #include <algorithm>
 #include <chrono>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <random>
 #include <sstream>
 
-#include "EndGame.h"
-#include "Startmenu.h"
-#include "InstructionWindow.h"
+#include "AIPlayer.h"
+#include "GameData.h"
 #include "GameManager.h"
 #include "HumanPlayer.h"
-#include "AIPlayer.h"
-#include "SetupScreen.h"
-#define FILENAME "scores.txt"
+
+#define SCORES "scores.txt"
+#define GAMEDATA "game_data.txt"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ GameManager::~GameManager()
 
 vector<int> GameManager::getRandomInitialStack(int size)
 {
-  vector<int> stack;
+    vector<int> stack;
     for (int i = 0; i < size; i++)
     {
         stack.push_back(i + 1);
@@ -48,7 +48,7 @@ vector<int> GameManager::getRandomInitialStack(int size)
 
 vector<Score> GameManager::getScoresFromFile()
 {
-    ifstream inFile(FILENAME);
+    ifstream inFile(SCORES);
 
     vector<Score> scores;
 
@@ -88,6 +88,50 @@ int GameManager::calculateScore()
     return 2 * n * (diff + 1);
 }
 
+bool validateGameData(vector<string> lines, GameData &data)
+{
+    try
+    {
+        if (lines.size() < 4 || lines.size() > 5)
+            return false;
+        data.Initials = lines[0];
+        data.StackHeight = stoi(lines[1]);
+        data.AIDifficulty = stoi(lines[2]);
+        data.IsRandom = (lines[3][0] == '1');
+        if (data.IsRandom == false)
+        {
+            stringstream iss(lines[4]);
+            int number;
+            while (iss >> number)
+                data.Order.push_back(number);
+            if(data.Order.size() != data.StackHeight) return false;
+        }
+        return true;
+    }
+    catch (exception &e)
+    {
+        return false;
+    }
+}
+
+GameData GameManager::getGameData(string filename)
+{
+    GameData ret;
+    bool isValid = false;
+    vector<string> lines;
+    while (isValid == false)
+    {
+        ifstream gameDataFile(GAMEDATA);
+        string line;
+        lines.clear();
+        while (getline(gameDataFile, line))
+            lines.push_back(line);
+        isValid = validateGameData(lines, ret);
+        gameDataFile.close();
+    }
+    return ret;
+}
+
 PlayerType GameManager::checkGameOver()
 {
     const vector<int> &leftStack = leftPlayer->getStack();
@@ -124,10 +168,10 @@ string GameManager::gameOver(PlayerType winner)
     return msg;
 }
 
-bool GameManager::displayAndWriteFinalScore(int score, string message)
+bool GameManager::writeFinalScore(int score, string message)
 {
     vector<Score> scores = getScoresFromFile();
-    ofstream outFile(FILENAME);
+    ofstream outFile(SCORES);
 
     scores.push_back(Score(playerInitials, score));
     sort(scores.begin(), scores.end(), [](Score &a, Score &b) { return a.score > b.score; });
@@ -157,25 +201,24 @@ void GameManager::makePlayers()
     if (rightPlayer != nullptr)
         delete rightPlayer;
 
-    // copy initial stack to vector
+    // Get Scores
     vector<Score> scores = getScoresFromFile();
-    string scoreString = "";
-    for(auto score: scores)
-      scoreString = scoreString + score.getText() + "   ";
-    bool isManual;
-    vector<int> order;
-  ]
-    if(!isManual) {
-      order = getRandomInitialStack(numberOfPancakes);
-    }
+
+    // inital data from file (JavaFX created)
+    GameData gameData = getGameData(GAMEDATA);
+
+    difficulty = gameData.AIDifficulty;
+    numberOfPancakes = gameData.StackHeight;
+    playerInitials = gameData.Initials;
+
+    vector<int> order = (gameData.IsRandom) ? getRandomInitialStack(numberOfPancakes) : gameData.Order;
+
     vector<int> leftStack(order);
     // make a copy for the right player
     vector<int> rightStack = leftStack;
 
     leftPlayer = new HumanPlayer(leftStack, PlayerType::LeftSide);
     rightPlayer = new AIPlayer(rightStack, PlayerType::RightSide, difficulty);
-
-    //delete[] initialStack;
 }
 
 PlayerType GameManager::nextTurn(PlayerType currentTurn)
@@ -217,7 +260,6 @@ PlayerType GameManager::gameLoop()
 void GameManager::runGame()
 {
     // Splash Screen
-	
     bool userChoice = true;
     while (userChoice)
     {
@@ -227,6 +269,6 @@ void GameManager::runGame()
         PlayerType gameWinner = gameLoop();
         string message = gameOver(gameWinner);
         int score = calculateScore();
-        userChoice = displayAndWriteFinalScore(score, message);
+        userChoice = true;
     }
 }

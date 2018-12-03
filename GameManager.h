@@ -1,12 +1,17 @@
 #pragma once
+
 #include <iostream>
+#include <string>
 #include <unistd.h>
-#include "std_lib_facilities_5.h"
-#include "GUI.h"
-#include "Graph.h"
+#include <vector>
+
+#include "GameData.h"
 #include "Player.h"
 #include "PlayerType.h"
 #include "Score.h"
+
+using namespace std;
+
 class GameManager
 {
   private:
@@ -21,18 +26,17 @@ class GameManager
     GameManager();
     ~GameManager();
 
-    int *promptForInitialStack(int size);
     vector<int> getRandomInitialStack(int size);
 
     vector<Score> getScoresFromFile();
-    void displayScores(string initials);
 
     int calculateScore();
 
+    GameData getGameData(string filename);
+
     PlayerType checkGameOver();
     string gameOver(PlayerType winner);
-    bool displayAndWriteFinalScore(int score, string message);
-
+    bool writeFinalScore(int score, string message);
     void makePlayers();
 
     PlayerType nextTurn(PlayerType currentTurn);

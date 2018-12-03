@@ -1,9 +1,10 @@
 #pragma once
 
 #include <vector>
-#include "std_lib_facilities_5.h"
 
 #include "PlayerType.h"
+
+using namespace std;
 
 class Player {
 protected:

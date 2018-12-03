@@ -1,22 +1,12 @@
 # Configuration
 CC = g++-8.2.0
-SRCS = Main.cpp Startmenu.cpp AIPlayer.cpp Player.cpp HumanPlayer.cpp EndGame.cpp InstructionWindow.cpp GameManager.cpp SetupScreen.cpp
+SRCS = Main.cpp AIPlayer.cpp Player.cpp HumanPlayer.cpp GameManager.cpp
 OBJS = ${SRCS:.cpp=.o}
 BASEFLAGS = -g -Wall -Wextra -std=c++2a -Wno-unused-parameter -w
 # BASEFLAGS += -pedantic -fsanitize=address,undefined
 TARGET = main
 
-# Generate objects and FLTK library
-ifndef LIBDIR
-	LIBDIR = lib
-endif
-LIBNAME = daugherity.a
-LIB = $(LIBDIR)/$(LIBNAME)
-SAMPLEOBJ = $(LIBDIR)/sample_main5.o
-
 # Compiler Flags
-CFLAGS = $(BASEFLAGS) $(shell fltk-config --use-images --cxxflags)
-LDFLAGS = $(BASEFLAGS) -lfltk -lfltk_images
 
 .PHONY: all clean run sample
 .SUFFIXES:
@@ -24,28 +14,17 @@ LDFLAGS = $(BASEFLAGS) -lfltk -lfltk_images
 all: $(TARGET)
 
 $(TARGET): $(OBJS) $(LIB)
-	$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $^ $(BASEFLAGS)
 
 %.o: %.cpp
-	$(CC) $(CFLAGS) -I$(LIBDIR) -c -o $@ $^
-
-
-# Compile and run the sample
-sample: $(SAMPLEOBJ) $(LIB)
-	$(CC) $(LDFLAGS) -o $@ $(SAMPLEOBJ) $(LIB)
-	@./$@
+	$(CC) -c -o $@ $^
 
 # Clean and run
 clean:
-	$(RM) $(TARGET) *.o $(SAMPLEOBJ) sample
+	$(RM) $(TARGET) *.o
 
 cleanall: clean
-	$(MAKE) -C $(LIBDIR) clean
+	clean
 
 run: $(TARGET)
 	@./$(TARGET)
-
-
-# Recursively compile the library
-$(LIB):
-	$(MAKE) -C $(LIBDIR)

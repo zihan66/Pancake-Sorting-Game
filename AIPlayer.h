@@ -1,9 +1,12 @@
 #pragma once
 
 #include <ostream>
+#include <vector>
 
 #include "Player.h"
 #include "AIMoveTree.h"
+
+using namespace std;
 
 class AIPlayer : public Player {
 private:
