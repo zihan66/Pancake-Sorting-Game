@@ -15,6 +15,7 @@
 #define GAMEDATA "setup.txt"
 #define AISTACKS "AIpancake.txt"
 #define HUMANSTACKS "pancake.txt"
+#define MOVE "click.txt"
 
 using namespace std;
 

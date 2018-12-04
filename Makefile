@@ -1,5 +1,5 @@
 # Configuration
-CC = g++-8.2.0
+CC = g++-8
 SRCS = Main.cpp AIPlayer.cpp Player.cpp HumanPlayer.cpp GameManager.cpp
 OBJS = ${SRCS:.cpp=.o}
 BASEFLAGS = -g -Wall -Wextra -std=c++2a -Wno-unused-parameter -w
