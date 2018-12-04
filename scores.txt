@@ -1,5 +1,5 @@
-AMS 84
-AMS 84
-AMS 84
-AMS 84
-AMS 84
+ASDF 90
+asdf 30
+asmdf 24
+AMS 10
+AMS 10

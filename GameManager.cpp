@@ -16,6 +16,8 @@
 #define AISTACKS "AIpancake.txt"
 #define HUMANSTACKS "pancake.txt"
 #define MOVE "click.txt"
+#define PLAYAGAIN "PlayAgain.txt"
+#define OVER "GameOver.txt"
 
 using namespace std;
 
@@ -105,7 +107,8 @@ bool validateGameData(vector<string> lines, GameData &data)
         {
             stringstream iss(lines[4]);
             int number;
-            while (iss >> number) {
+            while (iss >> number)
+            {
                 data.Order.push_back(number);
             }
             if (data.Order.size() != data.StackHeight)
@@ -252,7 +255,8 @@ Player *GameManager::getPlayer(PlayerType type)
     }
 }
 
-void clearFile(string filename) {
+void clearFile(string filename)
+{
     ofstream file;
     file.open(filename, ofstream::out | ofstream::trunc);
 }
@@ -261,7 +265,7 @@ void writeStackToFile(vector<int> stack, string filename)
 {
     ofstream stackFile;
     stackFile.open(filename.c_str(), ofstream::out | ofstream::app);
-    for(const auto& s: stack)
+    for (const auto &s : stack)
         stackFile << s << " ";
     stackFile << endl;
 }
@@ -289,20 +293,39 @@ PlayerType GameManager::gameLoop()
     return winner;
 }
 
-void setupFiles() {
+void setupFiles()
+{
     ofstream gameData(GAMEDATA);
     gameData.close();
+    ofstream over(OVER);
+    over.close();
     ofstream ai(AISTACKS);
     ai.close();
     ofstream human(HUMANSTACKS);
     human.close();
     ofstream move(MOVE);
     move.close();
+    ofstream aga(PLAYAGAIN);
+    aga.close();
 }
 
-void writeMessage(string message) {
-    ofstream file(HUMANSTACKS);
+void writeMessage(string message)
+{
+    ofstream file(OVER);
     file << message;
+}
+bool getPlayAgain()
+{
+    int ret = -1;
+    while (ret < 0)
+    {
+        ifstream moveFile(PLAYAGAIN);
+        if (moveFile.peek() != ifstream::traits_type::eof())
+            moveFile >> ret;
+
+        moveFile.close();
+    }
+    return ret == 1;
 }
 
 void GameManager::runGame()
@@ -318,11 +341,14 @@ void GameManager::runGame()
         int score = calculateScore();
         writeFinalScore(score);
         writeMessage(message);
+        userChoice = getPlayAgain();
+        cout << userChoice << endl;
     }
 
-    remove(SCORES);
     remove(AISTACKS);
     remove(HUMANSTACKS);
     remove(MOVE);
     remove(GAMEDATA);
+    remove(OVER);
+    remove(PLAYAGAIN);
 }

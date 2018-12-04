@@ -2,5 +2,5 @@
 
 make clean
 make
-javac Pancake.java Main.java 
-java Main & ./main
+javac -Xlint:unchecked Pancake.java Setup.java highScores.java highScores1.java  Startmenu.java
+java Startmenu & ./main

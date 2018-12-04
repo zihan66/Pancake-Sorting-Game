@@ -1,6 +1,7 @@
 import java.awt.TextArea;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
 
 import javafx.application.Application;
@@ -25,11 +26,10 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Stage;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-public class Pancake implements EventHandler<ActionEvent>{
+public class Pancake implements EventHandler<ActionEvent> {
     ArrayList<Integer> humanPancake;
     ArrayList<Integer> AIPancakes;
     ArrayList<Button> Buttons;
@@ -39,10 +39,12 @@ public class Pancake implements EventHandler<ActionEvent>{
     Text AI;
     Scene scene1;
     String winner;
-    
-    public Scene s() throws Exception
-    {
-    	Buttons = new ArrayList<>();
+    Stage root;
+    int StackSize;
+
+    public void start(Stage primaryStage) throws Exception {
+        root = primaryStage;
+        Buttons = new ArrayList<>();
         AIPancakes = new ArrayList<>();
         humanPancake = new ArrayList<>();
         ButtonsAI = new ArrayList<>();
@@ -51,10 +53,16 @@ public class Pancake implements EventHandler<ActionEvent>{
         AI = new Text();
         h.setFont(new Font(16));
         AI.setFont(new Font(16));
+        File file = new File("setup.txt");
+        Scanner scanner = new Scanner(file);
+        String temp = scanner.nextLine();
+        temp = scanner.nextLine();
+        StackSize = Integer.valueOf(temp);
+        scanner.close();
         read();
         attach_pancake();
         scene1 = new Scene(layout, 600, 600);
-        return scene1;
+        primaryStage.setScene(scene1);
     }
 
     @Override
@@ -64,7 +72,6 @@ public class Pancake implements EventHandler<ActionEvent>{
                 if (event.getSource() == Buttons.get(i)) {
                     Writer out = new FileWriter("click.txt");
                     Integer num = i;
-                    System.out.println(num);
                     out.write(num.toString());
                     out.close();
                     detach_pancake();
@@ -72,20 +79,23 @@ public class Pancake implements EventHandler<ActionEvent>{
                     attach_pancake();
                 }
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    public Scene changeScreen(String name) {
-    	//To do
-    	Scene s1 = null;	
-    	return s1;
+
+    public void changeScreen(String name) {
+        highScores h = new highScores();
+        try {
+            h.setname(name);
+            h.start(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    public void detach_pancake(){
-        for(int i = 0; i < humanPancake.size(); i++){
+    public void detach_pancake() {
+        for (int i = 0; i < humanPancake.size(); i++) {
             layout.getChildren().remove(Buttons.get(i));
             layout.getChildren().remove(ButtonsAI.get(i));
         }
@@ -97,7 +107,7 @@ public class Pancake implements EventHandler<ActionEvent>{
         layout.getChildren().remove(AI);
     }
 
-    public void attach_pancake(){
+    public void attach_pancake() {
         int start_y = startposition(humanPancake.size());
         int width;
         int center = 115;
@@ -106,7 +116,7 @@ public class Pancake implements EventHandler<ActionEvent>{
         h.setLayoutY(start_y - 15);
         h.setLayoutX(center - 20);
         layout.getChildren().add(h);
-        for(int i = 0; i < humanPancake.size(); i++){
+        for (int i = 0; i < humanPancake.size(); i++) {
             label = humanPancake.get(i).toString();
             width = 30 + humanPancake.get(i) * 10;
             Button b = new Button(label);
@@ -123,9 +133,9 @@ public class Pancake implements EventHandler<ActionEvent>{
         start_y = startposition(humanPancake.size());
         AI.setText("AI:");
         AI.setLayoutY(start_y - 15);
-        AI.setLayoutX(center+340);
+        AI.setLayoutX(center + 340);
         layout.getChildren().add(AI);
-        for(int i = 0; i < AIPancakes.size(); i++){
+        for (int i = 0; i < AIPancakes.size(); i++) {
             label = AIPancakes.get(i).toString();
             width = 30 + AIPancakes.get(i) * 10;
             Button b = new Button(label);
@@ -140,35 +150,54 @@ public class Pancake implements EventHandler<ActionEvent>{
         }
     }
 
-    public int startposition(int n){
-        int y = 320 - 40 * n;
+    public int startposition(int n) {
+        int y = 400 - 40 * n;
         return y;
     }
 
-    public void read() throws Exception{
-        File file = new File("pancake.txt");
-        Scanner sc = new Scanner(file);
-        Scanner w = new Scanner(file);
-        while(sc.hasNextInt()){
-            humanPancake.add(sc.nextInt());
-        }
-        if(sc.hasNext()) {
-        	winner = sc.nextLine();
-        	changeScreen(winner);
-        }
-        File Afile = new File("AIpancake.txt");
-        Scanner Asc = new Scanner(Afile);
-        
-        while(Asc.hasNextInt()){
-            AIPancakes.add(Asc.nextInt());
-        }
+    public void read() throws Exception {
+        boolean gameOver = false;
+        while (true) {
+            File over = new File("GameOver.txt");
+            Scanner o = new Scanner(over);
+            if(o.hasNext()) {
+                winner = o.nextLine();
+                System.out.println(winner);
+                gameOver = true;
+                break;
+            }
+            o.close();
+            File file = new File("pancake.txt");
+            AIPancakes.clear();
+            humanPancake.clear();
+            if (file.length() == 0)
+                continue;
+            Scanner sc = new Scanner(file);
+            Scanner w = new Scanner(file);
+            while (sc.hasNextInt()) {
+                humanPancake.add(sc.nextInt());
+            }
+            sc.close();
+            w.close();
+            File Afile = new File("AIpancake.txt");
+            Scanner Asc = new Scanner(Afile);
 
-        for(int j = 0; j < humanPancake.size(); j++){
-            System.out.println(humanPancake.get(j));
+            while (Asc.hasNextInt()) {
+                AIPancakes.add(Asc.nextInt());
+            }
+            Asc.close();
+            if (AIPancakes.size() < StackSize || humanPancake.size() < StackSize)
+                continue;
+            PrintWriter pw = new PrintWriter("pancake.txt");
+            pw.print("");
+            pw.close();
+
+            PrintWriter pai = new PrintWriter("pancake.txt");
+            pai.print("");
+            pai.close();
+            break;
         }
+        if(gameOver == true)
+            changeScreen(winner);
     }
-
-
 }
-    
-  
