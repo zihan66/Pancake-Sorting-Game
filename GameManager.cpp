@@ -289,6 +289,17 @@ PlayerType GameManager::gameLoop()
     return winner;
 }
 
+void setupFiles() {
+    ofstream gameData(GAMEDATA);
+    gameData.close();
+    ofstream ai(AISTACKS);
+    ai.close();
+    ofstream human(HUMANSTACKS);
+    human.close();
+    ofstream move(MOVE);
+    move.close();
+}
+
 void writeMessage(string message) {
     ofstream file(HUMANSTACKS);
     file << message;
@@ -299,6 +310,7 @@ void GameManager::runGame()
     bool userChoice = true;
     while (userChoice)
     {
+        setupFiles();
         makePlayers();
 
         PlayerType gameWinner = gameLoop();
