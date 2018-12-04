@@ -21,7 +21,7 @@ $(TARGET): $(OBJS) $(LIB)
 
 # Clean and run
 clean:
-	$(RM) $(TARGET) *.o 
+	$(RM) $(TARGET) *.o *.class pancake.txt AIpancake.txt click.txt setup.txt
 
 cleanall: clean
 	clean

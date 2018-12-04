@@ -105,8 +105,9 @@ bool validateGameData(vector<string> lines, GameData &data)
         {
             stringstream iss(lines[4]);
             int number;
-            while (iss >> number)
+            while (iss >> number) {
                 data.Order.push_back(number);
+            }
             if (data.Order.size() != data.StackHeight)
                 return false;
         }
